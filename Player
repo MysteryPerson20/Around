@@ -1,32 +1,15 @@
-local Players = game:GetService("Players")
-
-local player = Players.LocalPlayer
+local player = game.Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
 local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
 
-local function teleportInCircle()
-    local originalPosition = humanoidRootPart.Position
-    local radius = 5 -- Small radius to go around the character
-    local segments = 12 -- Number of segments in the circle
-    local delayTime = 0.001 -- Extremely fast teleportation
+-- Move the character forward by 8 studs
+local forwardVector = humanoidRootPart.CFrame.LookVector * 8
+humanoidRootPart.CFrame = humanoidRootPart.CFrame + forwardVector
 
-    for i = 0, segments - 1 do
-        local angle = math.rad((i / segments) * 360)
-        
-        -- Calculate the new position in the circle around the character
-        local offsetX = radius * math.cos(angle)
-        local offsetZ = radius * math.sin(angle)
-        local newPosition = originalPosition + Vector3.new(offsetX, 0, offsetZ)
-        
-        -- Teleport to the new position
-        humanoidRootPart.CFrame = CFrame.new(newPosition)
-        
-        -- Wait before teleporting to the next position
-        wait(delayTime)
-    end
+-- Rotate the character and camera by 180 degrees (180 degrees in radians is math.rad(180))
+local rotation = CFrame.Angles(0, math.rad(180), 0)
+humanoidRootPart.CFrame = humanoidRootPart.CFrame * rotation
 
-    -- Teleport back to the original position
-    humanoidRootPart.CFrame = CFrame.new(originalPosition)
-end
-
-teleportInCircle()
+-- Adjust the camera to follow the new character orientation
+local camera = game.Workspace.CurrentCamera
+camera.CFrame = CFrame.new(camera.CFrame.Position) * humanoidRootPart.CFrame.Rotation
